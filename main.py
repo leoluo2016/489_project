@@ -2,8 +2,9 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-video_path = "489_example.MOV"
+video_path = "489_example.mp4"  # or MOV, whichever you have
 template_path = "ball_template.png"
+
 
 cap = cv2.VideoCapture(video_path)
 
@@ -44,7 +45,18 @@ print(f'Candidate positions: {len(candidates)} at {candidates}')
 cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
 
 ret, prev_frame = cap.read()
+
+if not ret:
+    raise RuntimeError("Failed to read first frame")
+
 prev_gray = cv2.cvtColor(prev_frame, cv2.COLOR_BGR2GRAY)
+
+# ---- OUTPUT VIDEO WRITER ----
+fps = cap.get(cv2.CAP_PROP_FPS) / 6  # number indicates slow down output for better visualization, adjust as needed
+h, w = prev_frame.shape[:2]
+fourcc = cv2.VideoWriter_fourcc(*'avc1')
+out = cv2.VideoWriter("tracked_output.mp4", fourcc, fps, (w, h))
+
 
 kernel = np.ones((3,3), np.uint8)       # for dilating motion areas, modify as needed
 
@@ -195,7 +207,8 @@ while True:
             print(f'Frame:{frame_count}, {flight_points}')  # print flight points for debugging, can be removed in final version
 
     prev_gray = gray
-    cv2.imshow("Video", frame)  # visualize tracking
+    out.write(frame)
+    cv2.imshow("Video", frame)  # visualize tracking, can be removed in final version
     key = cv2.waitKey(25)
     if key == ord('q'):
         break
@@ -204,4 +217,5 @@ while True:
         break
 
 cap.release()
+out.release()
 cv2.destroyAllWindows()
