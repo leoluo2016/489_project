@@ -64,6 +64,7 @@ ball_center = None
 ball_detected = False
 
 trajectory = []
+flight_points = []
 frame_count = 0
 
 cv2.namedWindow("Video", cv2.WINDOW_NORMAL)
@@ -114,7 +115,6 @@ while True:
                 break
 
     # -------- MOTION TRACKING --------
-    flight_points = []
     if ball_detected:
         diff = cv2.absdiff(gray, prev_gray)
         _, motion = cv2.threshold(diff, 25, 255, cv2.THRESH_BINARY)     # this threshold may need tuning based on video quality and lighting conditions
@@ -204,8 +204,7 @@ while True:
             cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2)
             cv2.circle(frame, (cx,cy), 4, (0,0,255), -1)
             flight_points.append((cx, cy))
-            print(f'Frame:{frame_count}, {flight_points}')  # print flight points for debugging, can be removed in final version
-
+            print(f'Frame:{frame_count}, {(cx, cy)}')  # print ball flight points 
     prev_gray = gray
     out.write(frame)
     cv2.imshow("Video", frame)  # visualize tracking, can be removed in final version
@@ -215,7 +214,7 @@ while True:
 
     if cv2.getWindowProperty("Video", cv2.WND_PROP_VISIBLE) < 1:
         break
-
+print(flight_points)
 cap.release()
 out.release()
 cv2.destroyAllWindows()
