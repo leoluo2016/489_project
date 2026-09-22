@@ -62,9 +62,11 @@ For trajectory simulation, GPU acceleration became advantageous as the number of
 ```bash
 g++ face_on_timed.cpp -o ball_tracker $(pkg-config --cflags --libs opencv4)
 ./ball_tracker
+```
 
 ### CUDA Tracker 
 
+```bash
 nvcc --expt-relaxed-constexpr -std=c++17 two_blob_tracking_cuda_timed.cu \
     -o ball_tracker_cuda $(pkg-config --cflags --libs opencv4)
 
